@@ -3,6 +3,7 @@
 from openai import AzureOpenAI
 from functions import *
 from secret import *
+from utils import *
 
 client = AzureOpenAI(api_key=gpt4o_ak, api_version="2024-05-01-preview", azure_endpoint=gpt4o_ep)
 
@@ -66,7 +67,13 @@ elif run.status == 'requires_action':
 else:
     print(run.status)
 
+# Chat History
 messages = client.beta.threads.messages.list(thread_id=thread.id, order="asc")
 print(messages)
 chat_history = [mess.content[0].text.value for mess in messages.data]
 print(chat_history)
+
+# Run Steps
+run_steps = client.beta.threads.runs.steps.list(thread_id=thread.id, run_id=run.id, order="asc")
+print(run_steps)
+print([show_json(step.step_details) for step in run_steps.data])

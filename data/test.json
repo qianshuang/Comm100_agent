@@ -1,68 +1,31 @@
-SyncCursorPage[
-  Message
-](data=[
-  Message(id=
-  'msg_Rfi2smgY7i3uaoZZbfMB1DD4',
-  assistant_id=None,
-  attachments=
-  [],
-  completed_at=None,
-  content=
-  [
-    TextContentBlock(text=Text(annotations=
-    [],
-    value=
-    "What's the weather in San Francisco today and the likelihood it'll rain?"
-    ),
-    type=
-    'text'
-    )
-  ],
-  created_at=1732258213,
-  incomplete_at=None,
-  incomplete_details=None,
-  metadata=
-  {},
-  object=
-  'thread.message',
-  role=
-  'user',
-  run_id=None,
-  status=None,
-  thread_id=
-  'thread_Sw0TnQmyxocUXiu3bxFNgWGK'
-  ),
-  Message(id=
-  'msg_KvD8WesJZafdCyGAOWhIEKFR',
-  assistant_id=
-  'asst_6Io2uzSJWuBF7nZQIvsK7nKb',
-  attachments=
-  [],
-  completed_at=None,
-  content=
-  [
-    TextContentBlock(text=Text(annotations=
-    [],
-    value=
-    'The current temperature in San Francisco, CA is 57°F, and there is a 6% chance of rain today.'
-    ),
-    type=
-    'text'
-    )
-  ],
-  created_at=1732258219,
-  incomplete_at=None,
-  incomplete_details=None,
-  metadata=
-  {},
-  object=
-  'thread.message',
-  role=
-  'assistant',
-  run_id=
-  'run_iVm66zNohX9sOZABnisjjAsH',
-  status=None,
-  thread_id=
-  'thread_Sw0TnQmyxocUXiu3bxFNgWGK'
-  )
-], object='list', first_id='msg_Rfi2smgY7i3uaoZZbfMB1DD4', last_id='msg_KvD8WesJZafdCyGAOWhIEKFR', has_more=False)
+[
+  {
+    'tool_calls': [
+      {
+        'id': 'call_OJ4LmoK5yWltqdAI9FYLSMSh',
+        'function': {
+          'arguments': '{"location": "San Francisco, CA", "unit": "Fahrenheit"}',
+          'name': 'get_current_temperature',
+          'output': '57'
+        },
+        'type': 'function'
+      },
+      {
+        'id': 'call_GOXIc6FGF8DNyWzmSIw0iT3P',
+        'function': {
+          'arguments': '{"location": "San Francisco, CA"}',
+          'name': 'get_rain_probability',
+          'output': '0.06'
+        },
+        'type': 'function'
+      }
+    ],
+    'type': 'tool_calls'
+  },
+  {
+    'message_creation': {
+      'message_id': 'msg_Pax2lbFf5KL89u1bP8gMum5w'
+    },
+    'type': 'message_creation'
+  }
+]

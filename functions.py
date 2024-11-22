@@ -38,3 +38,15 @@ get_rain_probability = {
     },
     "strict": True
 }
+
+retrieve_KB = {
+    "name": "retrieve_KB",
+    "description": "If other tools are insufficient to answer the user's question, retrieve the knowledge base to obtain the answer",
+    "parameters": {  # 无参数情况
+        "type": "object",
+        "properties": {
+        },
+        "additionalProperties": False
+    },
+    "strict": True
+}

@@ -20,7 +20,8 @@ for _ in range(num_retries):
             tools=[{"type": "code_interpreter"},
                    {"type": "file_search"},
                    {"type": "function", "function": get_current_temperature},
-                   {"type": "function", "function": get_rain_probability}]
+                   {"type": "function", "function": get_rain_probability},
+                   {"type": "function", "function": retrieve_KB}]
         )
         break
     except:
@@ -66,6 +67,13 @@ elif run.status == 'requires_action':
             tool_outputs.append({"tool_call_id": tool.id, "output": "57"})
         elif tool.function.name == "get_rain_probability":
             tool_outputs.append({"tool_call_id": tool.id, "output": "0.06"})
+        elif tool.function.name == "retrieve_KB":
+            # 获取多轮对话
+            messages = client.beta.threads.messages.list(thread_id=thread.id, order="asc")
+            chat_history = [mess.content[0].text.value for mess in messages.data]
+            # rag_res = get_rag_res(chat_history)
+            # tool_outputs.append({"tool_call_id": tool.id, "output": rag_res})
+            pass
 
     # 提交函数调用结果给Agent，组装最终输出
     if tool_outputs:

@@ -2,22 +2,29 @@
 
 import os
 from fastapi import FastAPI
+from openai import AzureOpenAI
 from pydantic import BaseModel
-from config import *
+from actions import *
+from utils import *
+from secret import *
 
 app = FastAPI()
+
+client = AzureOpenAI(api_key=gpt4o_ak, api_version="2024-05-01-preview", azure_endpoint=gpt4o_ep)
+
 user2thread_file = "data/user2thread.json"
 user2thread = load_json_file(user2thread_file) if os.path.exists(user2thread_file) else {}
 
 
 class QueryBody(BaseModel):
+    assistant_id: str
     user_id: str
     query: str
 
 
 @app.get("/")
 def welcome():
-    return "Hello, my friend. Welcome to Comm100 Agent"
+    return "Welcome to Comm100 Agent."
 
 
 @app.post("/call_agent")
@@ -36,8 +43,6 @@ def call_agent(qb: QueryBody):
     message = client.beta.threads.messages.create(
         thread_id=thread_id,
         role="user",
-        # content="I need to solve the equation `3x + 11 = 14`. Can you help me?"
-        # content="请画一张饼图的示意图"
         content=qb.query
     )
     print(show_json(message))
@@ -45,44 +50,45 @@ def call_agent(qb: QueryBody):
     # 4. 调用Agent（异步执行）
     run = client.beta.threads.runs.create_and_poll(
         thread_id=thread_id,
-        assistant_id=assistant.id,
-        # instructions="Please address the user as Jane Doe. The user has a premium account."
+        assistant_id=qb.assistant_id,
+        instructions="For recommend_items function, please provide the user with recommendation reasons to promote to them."
     )
     print(show_json(run))
 
     # 5. 获取结果
     if run.status == 'completed':
         messages = client.beta.threads.messages.list(thread_id=thread_id)
-        try:
-            print(messages.data[0].content[0].text.value)
-        except:
-            print(show_json(messages.data[0].content[0]))
+        return {'code': 0, 'msg': 'LLM directly replied', 'data': messages.data[0].content[0].text.value}
     elif run.status == 'requires_action':
         # 函数调用
         tool_outputs = []
         for tool in run.required_action.submit_tool_outputs.tool_calls:
-            if tool.function.name == "get_current_temperature":
-                tool_outputs.append({"tool_call_id": tool.id, "output": "57"})
-            elif tool.function.name == "get_rain_probability":
-                tool_outputs.append({"tool_call_id": tool.id, "output": "0.06"})
+            if tool.function.name == "get_order":
+                tool_outputs.append({"tool_call_id": tool.id, "output": get_order_detail(json.loads(tool.function.arguments)["order_id"])})
+            elif tool.function.name == "get_item":
+                tool_outputs.append({"tool_call_id": tool.id, "output": get_item_detail(json.loads(tool.function.arguments)["item_id"])})
+            elif tool.function.name == "recommend_items":
+                tool_outputs.append({"tool_call_id": tool.id, "output": get_recommend_items()})
+            elif tool.function.name == "transfer_to_human":
+                tool_outputs.append({"tool_call_id": tool.id, "output": transfer_to_human()})
             elif tool.function.name == "retrieve_KB":
-                # 获取多轮对话
                 messages = client.beta.threads.messages.list(thread_id=thread_id, order="asc")
                 chat_history = [mess.content[0].text.value for mess in messages.data]
-                # rag_res = get_rag_res(chat_history)
-                # tool_outputs.append({"tool_call_id": tool.id, "output": rag_res})
-                pass
+                tool_outputs.append({"tool_call_id": tool.id, "output": get_rag_res(chat_history)})
 
         # 提交函数调用结果给Agent，组装最终输出
         if tool_outputs:
-            client.beta.threads.runs.submit_tool_outputs_and_poll(
+            run = client.beta.threads.runs.submit_tool_outputs_and_poll(
                 thread_id=thread_id,
                 run_id=run.id,
                 tool_outputs=tool_outputs
             )
 
         # 输出最终结果
+        run = wait_on_run(client, run, thread_id)
         messages = client.beta.threads.messages.list(thread_id=thread_id)
-        print(messages.data[0].content[0].text.value)
+        # print(show_json(messages))
+        print(show_json(run))
+        return {'code': 0, 'msg': 'Function Called', 'data': messages.data[0].content[0].text.value}
     else:
-        print(run.status)
+        return {'code': 0, 'msg': 'Others', 'data': run.status}

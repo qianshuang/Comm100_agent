@@ -16,8 +16,9 @@ assistant = client.beta.assistants.create(
     # code_interpreter: After the "Create Thread" is called every session is killed when either: 1. There is no activity on it (no run) for 30 minutes (idle timeout) 2. 60 minutes have passed since the time "Create Thread" was called.
     tools=[{"type": "code_interpreter"},
            {"type": "file_search"},
-           {"type": "function", "function": get_current_temperature},
-           {"type": "function", "function": get_rain_probability}]
+           # {"type": "function", "function": get_current_temperature},
+           # {"type": "function", "function": get_rain_probability}
+           ]
 )
 print(assistant)
 

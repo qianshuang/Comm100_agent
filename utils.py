@@ -3,6 +3,7 @@
 import json
 import logging
 import re
+import time
 
 from concurrent_log import ConcurrentTimedRotatingFileHandler
 
@@ -30,3 +31,16 @@ def load_json_file(file_path):
 def write_json_file(obj_dic, file_path):
     with open(file_path, "w", encoding="utf-8") as file:
         json.dump(obj_dic, file, ensure_ascii=False)
+
+
+def wait_on_run(client, run, thread_id):
+    sleep_seconds = 0
+    while run.status == "queued" or run.status == "in_progress" or run.status == "failed" or sleep_seconds <= 60:
+        time.sleep(1)
+        sleep_seconds += 1
+
+        run = client.beta.threads.runs.retrieve(
+            thread_id=thread_id,
+            run_id=run.id,
+        )
+    return run

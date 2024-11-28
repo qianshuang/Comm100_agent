@@ -1,31 +1,122 @@
-[
-  {
-    'tool_calls': [
-      {
-        'id': 'call_OJ4LmoK5yWltqdAI9FYLSMSh',
-        'function': {
-          'arguments': '{"location": "San Francisco, CA", "unit": "Fahrenheit"}',
-          'name': 'get_current_temperature',
-          'output': '57'
-        },
-        'type': 'function'
-      },
-      {
-        'id': 'call_GOXIc6FGF8DNyWzmSIw0iT3P',
-        'function': {
-          'arguments': '{"location": "San Francisco, CA"}',
-          'name': 'get_rain_probability',
-          'output': '0.06'
-        },
-        'type': 'function'
-      }
-    ],
-    'type': 'tool_calls'
+{
+  'id': 'run_4Q4RODaPP1nc4GBKxMUimySL',
+  'assistant_id': 'asst_0u9WaiLAH41x1Ft46B29sFJ5',
+  'cancelled_at': None,
+  'completed_at': None,
+  'created_at': 1732761477,
+  'expires_at': None,
+  'failed_at': 1732761485,
+  'incomplete_details': None,
+  'instructions': 'For recommend_items function, please provide the user with recommendation reasons to promote to them.',
+  'last_error': {
+    'code': 'rate_limit_exceeded',
+    'message': 'Rate limit is exceeded. Try again in 53 seconds.'
   },
-  {
-    'message_creation': {
-      'message_id': 'msg_Pax2lbFf5KL89u1bP8gMum5w'
+  'max_completion_tokens': None,
+  'max_prompt_tokens': None,
+  'metadata': {},
+  'model': 'GPT4oChat',
+  'object': 'thread.run',
+  'parallel_tool_calls': True,
+  'required_action': None,
+  'response_format': 'auto',
+  'started_at': 1732761479,
+  'status': 'failed',
+  'thread_id': 'thread_e1fYd0zBz7lYPzxwXspAoZS3',
+  'tool_choice': 'auto',
+  'tools': [
+    {
+      'function': {
+        'name': 'get_order',
+        'description': 'Get the order details for a specific order',
+        'parameters': {
+          'type': 'object',
+          'properties': {
+            'order_id': {
+              'type': 'string',
+              'description': 'The order id'
+            }
+          },
+          'required': [
+            'order_id'
+          ],
+          'additionalProperties': False
+        },
+        'strict': True
+      },
+      'type': 'function'
     },
-    'type': 'message_creation'
-  }
-]
+    {
+      'function': {
+        'name': 'get_item',
+        'description': 'Get the item details or check availability for a specific item',
+        'parameters': {
+          'type': 'object',
+          'properties': {
+            'item_id': {
+              'type': 'string',
+              'description': 'The item id'
+            }
+          },
+          'required': [
+            'item_id'
+          ],
+          'additionalProperties': False
+        },
+        'strict': True
+      },
+      'type': 'function'
+    },
+    {
+      'function': {
+        'name': 'recommend_items',
+        'description': 'When users inquire about the existence of specific models or styles of products, recommend up to 3 items to them',
+        'parameters': {
+          'type': 'object',
+          'properties': {},
+          'additionalProperties': False
+        },
+        'strict': True
+      },
+      'type': 'function'
+    },
+    {
+      'function': {
+        'name': 'transfer_to_human',
+        'description': 'When the user expresses the intention to switch to a human agent, transfer the conversation to a customer service representative.',
+        'parameters': {
+          'type': 'object',
+          'properties': {},
+          'additionalProperties': False
+        },
+        'strict': True
+      },
+      'type': 'function'
+    },
+    {
+      'function': {
+        'name': 'retrieve_KB',
+        'description': "If other tools are insufficient to answer the user's question, retrieve the knowledge base to obtain the answer",
+        'parameters': {
+          'type': 'object',
+          'properties': {},
+          'additionalProperties': False
+        },
+        'strict': True
+      },
+      'type': 'function'
+    }
+  ],
+  'truncation_strategy': {
+    'type': 'auto',
+    'last_messages': None
+  },
+  'usage': {
+    'completion_tokens': 18,
+    'prompt_tokens': 576,
+    'total_tokens': 594
+  },
+  'temperature': 0.0,
+  'top_p': 1.0,
+  'tool_resources': {}
+}

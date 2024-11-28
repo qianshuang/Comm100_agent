@@ -17,3 +17,22 @@
 2. 这些数据将在您通过API或仪表板删除后30天从我们的服务器中删除，未通过API或仪表板删除的对象将无限期保留。
 3. 只要ID（Assistant ID, Threads ID, messages ID, runs ID, Files ID）在，数据就在，可以随时pull them up，与应用程序启停无关。
 4. Code Intercepter收费0.03$ / session，File Search暂不收费。
+
+# 测试用例
+
+1. 商品详情
+2. 订单详情（ROUND1: I would like to inquire about the details of my order. ROUND2: 789456123, please.）
+3. 是否有货
+    1. TODO 缺货推荐
+4. 商品推荐
+    1. 给出推荐理由
+    2. TODO 语义检索
+5. 转人工
+6. RAG
+7. 测试意图跳转
+8. 测试必填字段
+
+# 启动方式
+
+1. 执行config.py，获取Assistant ID
+2. uvicorn main:app --host 0.0.0.0

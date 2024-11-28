@@ -17,11 +17,11 @@ for _ in range(num_retries):
             model="GPT4oChat",
             temperature=0,
             name="Weather Bot",
-            instructions="You are a weather bot. Use the provided functions to answer questions.",
-            tools=[{"type": "code_interpreter"},
-                   {"type": "file_search"},
-                   {"type": "function", "function": get_current_temperature},
-                   {"type": "function", "function": get_rain_probability},
+            instructions="You are a e-commerce bot. Use the provided functions to answer questions.",
+            tools=[{"type": "function", "function": get_order},
+                   {"type": "function", "function": get_item},
+                   {"type": "function", "function": recommend_items},
+                   {"type": "function", "function": transfer_to_human},
                    {"type": "function", "function": retrieve_KB}]
         )
         break

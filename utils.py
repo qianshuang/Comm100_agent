@@ -35,9 +35,10 @@ def write_json_file(obj_dic, file_path):
 
 def wait_on_run(client, run, thread_id):
     sleep_seconds = 0
-    while run.status == "queued" or run.status == "in_progress" or run.status == "failed" or sleep_seconds <= 60:
+    while run.status == "queued" or run.status == "in_progress" or (run.status == "failed" and sleep_seconds <= 60):
         time.sleep(1)
         sleep_seconds += 1
+        print("run.status: {}, sleep for {} seconds totally...".format(run.status, sleep_seconds))
 
         run = client.beta.threads.runs.retrieve(
             thread_id=thread_id,

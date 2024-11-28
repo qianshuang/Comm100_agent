@@ -1,11 +1,45 @@
 # -*- coding: utf-8 -*-
 
 from openai import AzureOpenAI
-from functions import *
 from secret import *
 from utils import *
 
 client = AzureOpenAI(api_key=gpt4o_ak, api_version="2024-05-01-preview", azure_endpoint=gpt4o_ep)
+
+get_current_temperature = {
+    "name": "get_current_temperature",
+    "description": "Get the current temperature for a specific location",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "location": {
+                "type": "string",
+                "description": "The city and state, e.g., San Francisco, CA"
+            },
+            "unit": {
+                "type": "string",
+                "enum": ["Celsius", "Fahrenheit"],
+                "description": "The temperature unit to use. Infer this from the user's location."
+            }
+        },
+        "required": ["location", "unit"]
+    }
+}
+
+get_rain_probability = {
+    "name": "get_rain_probability",
+    "description": "Get the probability of rain for a specific location",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "location": {
+                "type": "string",
+                "description": "The city and state, e.g., San Francisco, CA"
+            }
+        },
+        "required": ["location"]
+    }
+}
 
 # 1. 创建Agent
 assistant = client.beta.assistants.create(
@@ -16,15 +50,13 @@ assistant = client.beta.assistants.create(
     # code_interpreter: After the "Create Thread" is called every session is killed when either: 1. There is no activity on it (no run) for 30 minutes (idle timeout) 2. 60 minutes have passed since the time "Create Thread" was called.
     tools=[{"type": "code_interpreter"},
            {"type": "file_search"},
-           # {"type": "function", "function": get_current_temperature},
-           # {"type": "function", "function": get_rain_probability}
-           ]
+           {"type": "function", "function": get_current_temperature},
+           {"type": "function", "function": get_rain_probability}]
 )
-print(assistant)
+print(show_json(assistant))
 
 # 2. 创建用户栈
 thread = client.beta.threads.create()
-print(thread)
 
 # 3. 创建交互
 message = client.beta.threads.messages.create(
@@ -32,7 +64,6 @@ message = client.beta.threads.messages.create(
     role="user",
     content="What's the weather in San Francisco today and the likelihood it'll rain?"
 )
-print(message)
 
 # 4. 调用Agent（异步执行）
 run = client.beta.threads.runs.create_and_poll(
@@ -40,7 +71,6 @@ run = client.beta.threads.runs.create_and_poll(
     assistant_id=assistant.id,
     instructions="Please address the user as Jane Doe. The user has a premium account."
 )
-print(run)
 
 # 5. 获取结果
 if run.status == 'completed':
@@ -64,18 +94,15 @@ elif run.status == 'requires_action':
         )
 
     # 输出最终结果
-    messages = client.beta.threads.messages.list(thread_id=thread.id)
-    print(messages.data[0].content[0].text.value)
+    run = wait_on_run(client, run, thread.id)
+    if run.status == 'completed':
+        messages = client.beta.threads.messages.list(thread_id=thread.id)
+        print(messages.data[0].content[0].text.value)
+    else:
+        print(show_json(run))
 else:
     print(run.status)
 
-# Chat History
-messages = client.beta.threads.messages.list(thread_id=thread.id, order="asc")
-print(messages)
-chat_history = [mess.content[0].text.value for mess in messages.data]
-print(chat_history)
-
 # Run Steps
 run_steps = client.beta.threads.runs.steps.list(thread_id=thread.id, run_id=run.id, order="asc")
-print(run_steps)
 print([show_json(step.step_details) for step in run_steps.data])

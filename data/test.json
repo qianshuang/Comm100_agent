@@ -1,16 +1,16 @@
 {
-  'id': 'run_4Q4RODaPP1nc4GBKxMUimySL',
-  'assistant_id': 'asst_0u9WaiLAH41x1Ft46B29sFJ5',
+  'id': 'run_GvqoR2oxiD5fyGWRLEGJ1pYY',
+  'assistant_id': 'asst_tzys3y1Rgb7BC0bcuFdHQY3i',
   'cancelled_at': None,
   'completed_at': None,
-  'created_at': 1732761477,
+  'created_at': 1732774323,
   'expires_at': None,
-  'failed_at': 1732761485,
+  'failed_at': 1732774333,
   'incomplete_details': None,
-  'instructions': 'For recommend_items function, please provide the user with recommendation reasons to promote to them.',
+  'instructions': 'Please address the user as Jane Doe. The user has a premium account.',
   'last_error': {
     'code': 'rate_limit_exceeded',
-    'message': 'Rate limit is exceeded. Try again in 53 seconds.'
+    'message': 'Rate limit is exceeded. Try again in 52 seconds.'
   },
   'max_completion_tokens': None,
   'max_prompt_tokens': None,
@@ -20,89 +20,70 @@
   'parallel_tool_calls': True,
   'required_action': None,
   'response_format': 'auto',
-  'started_at': 1732761479,
+  'started_at': 1732774327,
   'status': 'failed',
-  'thread_id': 'thread_e1fYd0zBz7lYPzxwXspAoZS3',
+  'thread_id': 'thread_OWVdmkvhqvhxFAJkRMWyl1ip',
   'tool_choice': 'auto',
   'tools': [
     {
+      'type': 'code_interpreter'
+    },
+    {
+      'type': 'file_search',
+      'file_search': {
+        'max_num_results': None,
+        'ranking_options': {
+          'score_threshold': 0.0,
+          'ranker': 'default_2024_08_21'
+        }
+      }
+    },
+    {
       'function': {
-        'name': 'get_order',
-        'description': 'Get the order details for a specific order',
+        'name': 'get_current_temperature',
+        'description': 'Get the current temperature for a specific location',
         'parameters': {
           'type': 'object',
           'properties': {
-            'order_id': {
+            'location': {
               'type': 'string',
-              'description': 'The order id'
+              'description': 'The city and state, e.g., San Francisco, CA'
+            },
+            'unit': {
+              'type': 'string',
+              'enum': [
+                'Celsius',
+                'Fahrenheit'
+              ],
+              'description': "The temperature unit to use. Infer this from the user's location."
             }
           },
           'required': [
-            'order_id'
-          ],
-          'additionalProperties': False
+            'location',
+            'unit'
+          ]
         },
-        'strict': True
+        'strict': False
       },
       'type': 'function'
     },
     {
       'function': {
-        'name': 'get_item',
-        'description': 'Get the item details or check availability for a specific item',
+        'name': 'get_rain_probability',
+        'description': 'Get the probability of rain for a specific location',
         'parameters': {
           'type': 'object',
           'properties': {
-            'item_id': {
+            'location': {
               'type': 'string',
-              'description': 'The item id'
+              'description': 'The city and state, e.g., San Francisco, CA'
             }
           },
           'required': [
-            'item_id'
-          ],
-          'additionalProperties': False
+            'location'
+          ]
         },
-        'strict': True
-      },
-      'type': 'function'
-    },
-    {
-      'function': {
-        'name': 'recommend_items',
-        'description': 'When users inquire about the existence of specific models or styles of products, recommend up to 3 items to them',
-        'parameters': {
-          'type': 'object',
-          'properties': {},
-          'additionalProperties': False
-        },
-        'strict': True
-      },
-      'type': 'function'
-    },
-    {
-      'function': {
-        'name': 'transfer_to_human',
-        'description': 'When the user expresses the intention to switch to a human agent, transfer the conversation to a customer service representative.',
-        'parameters': {
-          'type': 'object',
-          'properties': {},
-          'additionalProperties': False
-        },
-        'strict': True
-      },
-      'type': 'function'
-    },
-    {
-      'function': {
-        'name': 'retrieve_KB',
-        'description': "If other tools are insufficient to answer the user's question, retrieve the knowledge base to obtain the answer",
-        'parameters': {
-          'type': 'object',
-          'properties': {},
-          'additionalProperties': False
-        },
-        'strict': True
+        'strict': False
       },
       'type': 'function'
     }
@@ -112,9 +93,9 @@
     'last_messages': None
   },
   'usage': {
-    'completion_tokens': 18,
-    'prompt_tokens': 576,
-    'total_tokens': 594
+    'completion_tokens': 59,
+    'prompt_tokens': 1042,
+    'total_tokens': 1101
   },
   'temperature': 0.0,
   'top_p': 1.0,

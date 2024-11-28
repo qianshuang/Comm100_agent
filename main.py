@@ -86,9 +86,11 @@ def call_agent(qb: QueryBody):
 
         # 输出最终结果
         run = wait_on_run(client, run, thread_id)
-        messages = client.beta.threads.messages.list(thread_id=thread_id)
-        # print(show_json(messages))
-        print(show_json(run))
-        return {'code': 0, 'msg': 'Function Called', 'data': messages.data[0].content[0].text.value}
+        if run.status == 'completed':
+            messages = client.beta.threads.messages.list(thread_id=thread_id)
+            return {'code': 0, 'msg': 'Function Called', 'data': messages.data[0].content[0].text.value}
+        else:
+            print(show_json(run))
+            return {'code': -1, 'msg': 'Function Called Failed.'}
     else:
-        return {'code': 0, 'msg': 'Others', 'data': run.status}
+        return {'code': -1, 'msg': 'Run Failed.', 'data': run.status}
